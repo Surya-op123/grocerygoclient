@@ -1,50 +1,22 @@
+import { useEffect, useState } from 'react';
 import Layout from '../../components/Layout'
+import { useAuth } from '../../contexts/AuthContext';
 
-const categories = [
-   {
-      name: "Vegetables",
-      image: "/assets/img/category/category-62f1f463de7a1.jpg",
-   },
-   {
-      name: "Condiments & Spices",
-      image: "/assets/img/category/category-62f1f4f61b5b1.jpg",
-   },
-   {
-      name: "Bread & Bakery",
-      image: "/assets/img/category/category-62f1f9acd4fd6.jpg",
-   },
-   {
-      name: "Beverage",
-      image: "/assets/img/category/category-62f1f73d70175.jpg",
-   },
-   {
-      name: "Snacks",
-      image: "/assets/img/category/category-62f1f94c34021.jpg",
-   },
-   {
-      name: "Dairy Products",
-      image: "/assets/img/category/category-62f1f7c7b0ebe.jpg",
-   },
-   {
-      name: "Meat",
-      image: "/assets/img/category/category-62f1f852827a1.jpg",
-   },
-   {
-      name: "Personal Care",
-      image: "/assets/img/category/category-62f1f6e0c099b.jpg",
-   },
-   {
-      name: "Fruits",
-      image: "/assets/img/category/category-62f1f3b743b54.jpg",
-   },
-   {
-      name: "Cleaning Supplies",
-      image: "/assets/img/category/category-62f1fa2913b17.jpg",
-   },
-];
 
 export default function Categories() {
+   const { getAllCategories } = useAuth();
+   const [categories, setCategories] = useState([]);
 
+   useEffect(() => {
+      const fetchCategories = async () => {
+         const data = await getAllCategories();
+         // setCategories(data.filter(category => category.status === true));
+         const doubled = [...data, ...data]; // double Data
+         setCategories(doubled.filter(category => category.status === true));
+      };
+
+      fetchCategories();
+   }, [getAllCategories]);
 
    return (
       <Layout>
@@ -67,20 +39,21 @@ export default function Categories() {
             <div className="container">
                <h3 className="fw-bold fs-2 mb-4 truncate-2">Featured Categories</h3>
                <div className="row mb-3 g-sm-3 g-2">
-                  {categories.map((i) => (
-                     <div className="col-lg-2 col-md-3 col-sm-4 col-6 category">
+                  {categories.map((cat) => (
+                     <div key={cat._id} className="col-lg-2 col-md-3 col-sm-4 col-6 category">
                         <div className="category-wrapper">
                            <div className="category-card">
-                              <a href={'/menu'}>
+                              <a href={`/menu?category=${encodeURIComponent(cat.name)}`}>
                                  <div className="cat rounded-circle mx-auto">
-                                    <img src={i.image} className="rounded-circle" alt="category" />
+                                    <img src={cat.categoryImage} alt={cat.name} className="rounded-circle" />
                                  </div>
                               </a>
                            </div>
-                           <p className="my-2 text-center line-1">{i.name}</p>
+                           <p className="my-2 text-center line-1">{cat.name}</p>
                         </div>
                      </div>
                   ))}
+
                </div>
             </div>
          </section>

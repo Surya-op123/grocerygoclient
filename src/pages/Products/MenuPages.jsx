@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import ProductItem from '../../components/ProductItem';
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const groceryItems = [
    {
@@ -40,8 +41,29 @@ const groceryItems = [
 ];
 
 export default function MenuPages() {
-   const [isFilterTab, setFilterTab] = useState('All');
-   const FilterTab = (id) => setFilterTab(id);
+   const { getAllSubCategories } = useAuth();
+   const [subCategories, setSubCategories] = useState([]);
+
+   const location = useLocation();
+   const queryParams = new URLSearchParams(location.search);
+   const selectedCategory = queryParams.get("category");
+
+   // const [allItems, setAllItems] = useState([]);
+   const [activeTab, setActiveTab] = useState('all');
+
+   useEffect(() => {
+      const fetchData = async () => {
+         const data = await getAllSubCategories(); // API: subcategories
+         // const items = await getAllItems();              // API: all items
+         setSubCategories(data);
+         // setAllItems(items);
+      };
+
+      fetchData();
+   }, [getAllSubCategories]);
+
+   // const filteredItems = activeTab === 'all' ? allItems : allItems.filter(item => item.subcategoryId === activeTab);
+
 
    return (
       <Layout>
@@ -51,7 +73,7 @@ export default function MenuPages() {
                   <nav className="text-dark d-flex breadcrumb-divider" aria-label="breadcrumb">
                      <ol className="breadcrumb">
                         <li className="breadcrumb-item "><a className="text-dark" href="/">Home</a></li>
-                        <li className="breadcrumb-item text-primary fw-bold active" aria-current="page">Snacks</li>
+                        <li className="breadcrumb-item text-primary fw-bold active" aria-current="page">{selectedCategory}</li>
                      </ol>
                   </nav>
                </div>
@@ -61,15 +83,22 @@ export default function MenuPages() {
          <section className="menu-section">
             <div className="container">
                <div className="row mb-5">
+
                   <div className="filter-sidebar mb-3">
                      <div className="sidebar-wrap" id="style-3">
-                        <Link onClick={() => FilterTab('All')} className={`${isFilterTab === 'All' ? "active" : " "}`}>All</Link>
-                        <Link onClick={() => FilterTab('Coffee')} className={`${isFilterTab === 'Coffee' ? "active" : " "}`}>Coffee</Link>
-                        <Link onClick={() => FilterTab('All')} className={`${isFilterTab === '' ? "active" : " "}`}>Fresh Juice</Link>
-                        <Link onClick={() => FilterTab('All')} className={`${isFilterTab === '' ? "active" : " "}`}>Soft Drinks</Link>
-                        <Link onClick={() => FilterTab('All')} className={`${isFilterTab === '' ? "active" : " "}`}>Cold/Energy Drinks</Link>
+                        <div>
+                           <a href='#' onClick={(e) => { e.preventDefault(); setActiveTab('all'); }} className={`${activeTab === 'all' ? "active" : ""}`}>All</a>
+                        </div>
+                        {subCategories.map((item) => (<>
+                           {item.category?.name === selectedCategory &&
+                              <div key={item._id}>
+                                 <a href='#' onClick={(e) => { e.preventDefault(); setActiveTab(item.name); }} className={`${activeTab === item.name ? "active" : ""}`}>{item.name}</a>
+                              </div>
+                           }
+                        </>))}
                      </div>
                   </div>
+
                   {groceryItems.length > 0 ? (<>
                      <div className="menu my-0">
                         <div className="row row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-2 g-sm-3 g-2">
@@ -79,7 +108,7 @@ export default function MenuPages() {
                      <div className="mt-5 d-flex justify-content-center"></div>
                   </>) : (
                      <div className="d-grid no-data justify-items-center my-3">
-                        <img src="/assets/img/no_data_image.png"  alt=''className=" mb-3 " />
+                        <img src="/assets/img/no_data_image.png" alt='' className=" mb-3 " />
                         <h4>No data found</h4>
                      </div>
                   )}

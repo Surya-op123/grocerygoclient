@@ -109,6 +109,30 @@ export const AuthProvider = ({ children }) => {
 
 
 
+   // Categery All List 
+   const getAllCategories = async () => {
+      try {
+         const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/categories`);
+         return res.data;
+      } catch (err) {
+         console.error("Error fetching categories:", err);
+         return [];
+      }
+   };
+
+   // Categery All List 
+   const getAllSubCategories = async () => {
+      try {
+         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/subcategories`);
+         return response.data;
+      } catch (err) {
+         console.error("Error fetching categories:", err);
+         return [];
+      }
+   };
+
+
+
 
    const [isBlur, setIsBlur] = useState(false);
    const [isAddCartModel, setIsAddCartModel] = useState(false);
@@ -139,6 +163,9 @@ export const AuthProvider = ({ children }) => {
       <AuthContext.Provider value={{
          user, login, register, updateUserProfile, changePassword,
          logout, isAuthenticated: !!user, loading,
+
+         getAllCategories, getAllSubCategories,
+
          AddCartModel, isAddCartModel, isBlur,
          isGuestModel, GuestModel,
          isNewsLatter, ShowNewsLatter,

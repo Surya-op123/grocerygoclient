@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import { Link } from 'react-router-dom'
 
 import OwlCarousel from "react-owl-carousel";
 import ProductItem from '../components/ProductItem';
 import ProductItemLG from '../components/ProductItemLG';
+import { useAuth } from '../contexts/AuthContext';
 
 const offers = [
   { text: "Excellent Offer For Shop : OFF10" },
@@ -68,59 +69,6 @@ const banner2Items = [
   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/banner/banner-62f791c12e25f.png",
   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/banner/banner-62f791b44bde0.png",
   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/banner/banner-62f791cb27ccd.png",
-];
-
-const categories = [
-  {
-    name: "Vegetables",
-    image: "/assets/img/category/category-62f1f463de7a1.jpg",
-    link: "/menu?category=vegetables-12",
-  },
-  {
-    name: "Condiments & Spices",
-    image: "/assets/img/category/category-62f1f4f61b5b1.jpg",
-    link: "/menu?category=condiments-spices",
-  },
-  {
-    name: "Bread & Bakery",
-    image: "/assets/img/category/category-62f1f9acd4fd6.jpg",
-    link: "/menu?category=bread-bakery",
-  },
-  {
-    name: "Beverage",
-    image: "/assets/img/category/category-62f1f73d70175.jpg",
-    link: "/menu?category=beverage",
-  },
-  {
-    name: "Snacks",
-    image: "/assets/img/category/category-62f1f94c34021.jpg",
-    link: "/menu?category=snacks",
-  },
-  {
-    name: "Dairy Products",
-    image: "/assets/img/category/category-62f1f7c7b0ebe.jpg",
-    link: "/menu?category=dairy-products",
-  },
-  {
-    name: "Meat",
-    image: "/assets/img/category/category-62f1f852827a1.jpg",
-    link: "/menu?category=meat",
-  },
-  {
-    name: "Personal Care",
-    image: "/assets/img/category/category-62f1f6e0c099b.jpg",
-    link: "/menu?category=personal-care",
-  },
-  {
-    name: "Fruits",
-    image: "/assets/img/category/category-62f1f3b743b54.jpg",
-    link: "/menu?category=fruits",
-  },
-  {
-    name: "Cleaning Supplies",
-    image: "/assets/img/category/category-62f1fa2913b17.jpg",
-    link: "/menu?category=cleaning-supplies",
-  },
 ];
 
 const groceryItems = [
@@ -331,6 +279,21 @@ const best_products = [
 
 export default function HomePage() {
 
+  const { getAllCategories } = useAuth();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await getAllCategories();
+      // setCategories(data);  // Not Dubble data
+      const doubled = [...data, ...data]; // double Data
+      setCategories(doubled.filter(category => category.status === true));
+    };
+
+    fetchCategories();
+  }, [getAllCategories]);
+
+
   const options = {
     loop: true,
     autoplay: true,
@@ -394,7 +357,7 @@ export default function HomePage() {
     margin: 10,
     nav: true,
     dots: false,
-    autoplay: true,
+    autoplay: false,
     autoplayTimeout: 5000,
     responsive: {
       0: { items: 2 },
@@ -404,8 +367,8 @@ export default function HomePage() {
       1000: { items: 6 },
     },
     navText: [
-      '<i className="fa fa-arrow-left"></i>',
-      '<i className="fa fa-arrow-right"></i>',
+      '<i class="fa fa-arrow-left"></i>',
+      '<i class="fa fa-arrow-right"></i>',
     ],
 
   };
@@ -464,7 +427,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="carousel-indicators">
-              <button type="button" data-bs-target="#slidercarousel" data-bs-slide-to={0}  aria-label="Slide 1" />
+              <button type="button" data-bs-target="#slidercarousel" data-bs-slide-to={0} aria-label="Slide 1" />
               <button type="button" data-bs-target="#slidercarousel" data-bs-slide-to={1} className="active" aria-label="Slide 1" aria-current="true" />
             </div>
             <button className="carousel-control-prev btn-none " type="button" data-bs-target="#slidercarousel" data-bs-slide="prev">
@@ -650,14 +613,14 @@ export default function HomePage() {
             </div>
 
             <OwlCarousel id="category" className="mt-2" {...categorySettings}>
-              {categories.map((category, index) => (
-                <div key={index} className="category-wrapper card">
-                  <a href={category.link}>
+              {categories.map((cat) => (
+                <div key={cat._id} className="category-wrapper card">
+                  <a href={`/menu?category=${encodeURIComponent(cat.name)}`}>
                     <div className="cat rounded-circle d-flex m-auto">
-                      <img src={category.image} alt={category.name} className="rounded-circle" />
+                      <img src={cat.categoryImage} alt={cat.name} className="rounded-circle" />
                     </div>
                     <div className="card-body p-0">
-                      <p className="text-dark text-center my-2">{category.name}</p>
+                      <p className="text-dark text-center my-2">{cat.name}</p>
                     </div>
                   </a>
                 </div>
@@ -716,7 +679,7 @@ export default function HomePage() {
         </div>
 
         <div className="row row-cols-xl-3 row-cols-lg-2 row-cols-sm-2 row-cols-1 g-sm-3 g-2">
-          {best_products.map((i) => (<ProductItemLG key={i.title}  i={i} />))}
+          {best_products.map((i) => (<ProductItemLG key={i.title} i={i} />))}
         </div>
       </div>
     </section>
@@ -818,8 +781,8 @@ export default function HomePage() {
                   <h2 className="mb-2">Make your online shop easier with our mobile app</h2>
                   <span className="sub-title text-capitalize m-0">Experience the Revolutionised &amp; user-friendly Top online Grocery ordering system to skyrocket Groceries sales.</span>
                   <div className="my-4 d-flex">
-                    <a href="https://play.google.com/store/apps" target="_blank"><img src="/assets/img/index/playstore.png" width={153} height={46}  alt=''/> </a>
-                    <a className="ms-2" href="https://www.apple.com/in/itunes/" target="_blank"><img src="/assets/img/index/appstore.svg" width={153} height={46}  alt=''/></a>
+                    <a href="https://play.google.com/store/apps" target="_blank"><img src="/assets/img/index/playstore.png" width={153} height={46} alt='' /> </a>
+                    <a className="ms-2" href="https://www.apple.com/in/itunes/" target="_blank"><img src="/assets/img/index/appstore.svg" width={153} height={46} alt='' /></a>
                   </div>
                 </div>
               </div>
