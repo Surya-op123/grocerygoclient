@@ -411,10 +411,10 @@ export default function ProductDetails() {
                   <div className="product-view" id="review-tab">
                      <ul className="nav nav-pills py-3 mb-4 border-bottom border-top" id="pills-tab" role="tablist">
                         <li className="nav-item" role="presentation">
-                           <a className="nav-link active py-2 me-2 me-md-3" aria-current="page" data-bs-toggle="pill" data-bs-target="#pills-description" href="javascript:void(0)" aria-selected="true" role="tab" tabIndex={-1}>Description</a>
+                           <a className="nav-link active py-2 me-2 me-md-3" aria-current="page" data-bs-toggle="pill" data-bs-target="#pills-description" href=" #" aria-selected="true" role="tab" tabIndex={-1}>Description</a>
                         </li>
                         <li className="nav-item" role="presentation">
-                           <a className="nav-link py-2" href="javascript:void(0)" data-bs-toggle="pill" data-bs-target="#pills-review" aria-selected="false" role="tab" tabIndex={-1}>Reviews</a>
+                           <a className="nav-link py-2" href=" #" data-bs-toggle="pill" data-bs-target="#pills-review" aria-selected="false" role="tab" tabIndex={-1}>Reviews</a>
                         </li>
                      </ul>
                   </div>

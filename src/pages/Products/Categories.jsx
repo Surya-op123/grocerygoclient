@@ -10,9 +10,7 @@ export default function Categories() {
    useEffect(() => {
       const fetchCategories = async () => {
          const data = await getAllCategories();
-         // setCategories(data.filter(category => category.status === true));
-         const doubled = [...data, ...data]; // double Data
-         setCategories(doubled.filter(category => category.status === true));
+         setCategories(data.filter(category => category.status === true));
       };
 
       fetchCategories();

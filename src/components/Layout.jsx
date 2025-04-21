@@ -6,6 +6,7 @@ import AddToCart from '../models/AddToCart';
 import { useAuth } from '../contexts/AuthContext';
 import CheckOutGuest from '../models/CheckOutGuest';
 import NewsLatterModel from '../models/NewsLatterModel';
+import ShowToast from './ShowToast';
 
 export default function Layout({ children }) {
   useEffect(() => {
@@ -31,12 +32,21 @@ export default function Layout({ children }) {
   const [showOffer, setShowOffer] = useState(false);
   const toggleOffcanvas = () => { setShowOffer(!showOffer); };
 
-  const { isAuthenticated,
+  const { subscribeToNewsletter,
     AddCartModel, isAddCartModel, isBlur,
     isGuestModel, GuestModel,
     isNewsLatter, ShowNewsLatter,
     CookiesCancel, isAcceptedCookie, setIsAcceptedCookie
   } = useAuth();
+
+  const [emailNewsletter, setEmailNewsletter] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const result = await subscribeToNewsletter(emailNewsletter);
+    ShowToast({ message: result.message, type: result.success });
+    if (result.success === "success") setEmailNewsletter('');
+  };
 
 
   return (<>
@@ -82,7 +92,7 @@ export default function Layout({ children }) {
                   <div className="d-flex align-items-center gap-3">
                     <div><Link className="btn-lang border-0 rounded-5 hw-40" type="button"><img src="/assets/img/flag-lang.png" className="img-fluid lag-img rounded-5" alt='' /></Link></div>
                     <div className="cart-area d-block nav-sidebar-bg"><a href="/cart" className="text-primary"><i className="fas fa-basket-shopping" /><span className="cart-badge">0</span></a></div>
-                    <div><a className="nav-link px-3 nav-sidebar-bg" href={isAuthenticated ? '/profile' : '/login'}> <i className="fa-regular fa-user text-primary" /></a></div>
+                    <div><a className="nav-link px-3 nav-sidebar-bg" href={'/login'}> <i className="fa-regular fa-user text-primary" /></a></div>
                   </div>
                 </div>
               </div>
@@ -114,7 +124,7 @@ export default function Layout({ children }) {
                 </a>
               </li>
               <li className="position-relative">
-                <a className={`${isPathActive('/login')}`} href={isAuthenticated ? '/profile' : '/login'}>
+                <a className={`${isPathActive('/login')}`} href={'/login'}>
                   <i className="fa fa-user fs-6" />
                   <span className="tab-bar-text">Account</span>
                 </a>
@@ -179,6 +189,7 @@ export default function Layout({ children }) {
                           <li><a href="/terms-conditions" className="text-dark fs-7">Terms &amp; Conditions</a></li>
                         </ul>
                       </div>
+
                       <div className="col-md-3 col-sm-4 col-auto mb-2">
                         <h4>Other pages</h4>
                         <ul>
@@ -189,14 +200,15 @@ export default function Layout({ children }) {
                           <li><a href="/blogs" className="text-dark fs-7">Blogs</a></li>
                         </ul>
                       </div>
+
                       <div className="col-lg-5 col-12 col-auto mb-2">
                         <h4 className="mb-3">Newslatter</h4>
                         <div className="mb-3">
                           <p className="text-dark fs-7">Receive our latest updates about our products &amp; promotions.</p>
                         </div>
-                        <form className="mt-4 footer-form">
+                        <form onSubmit={handleSubmit} className="mt-4 footer-form">
                           <div className="input-group gap-2">
-                            <input type="text" className="form-control rounded" name="email" placeholder="Email" required />
+                            <input type="text" className="form-control rounded" name="email" placeholder="Email" required value={emailNewsletter} onChange={(e) => setEmailNewsletter(e.target.value)} />
                             <button className="btn btn-secondary rounded px-4" type="submit">Subscribe</button>
                           </div>
                         </form>

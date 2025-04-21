@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
@@ -15,10 +15,8 @@ import BlogsPage from "./pages/BlogsPage"
 import GalleryPage from "./pages/GalleryPage";
 import ContactUsPage from "./pages/ContactUsPage";
 
-import AbousUsPage from "./pages/Abouts/AbousUsPage";
-import PrivacyPolicy from "./pages/Abouts/PrivacyPolicy";
-import RefundPolicy from "./pages/Abouts/RefundPolicy";
-import TermsConditions from "./pages/Abouts/TermsConditions";
+import ContentPages from "./pages/Abouts/ContentPages";
+
 import OurTeam from "./pages/Abouts/OurTeam";
 import Faq from "./pages/Abouts/Faq";
 
@@ -38,19 +36,22 @@ import MyWalletPage from "./pages/Auth/MyWalletPage";
 import AddMoney from "./pages/Auth/AddMoney";
 import ReferEarn from "./pages/ReferEarn";
 import DeleteAccount from "./pages/Auth/DeleteAccount";
+import { useAuth } from "./contexts/AuthContext";
 
 
 function App() {
+  const { isAuthenticated } = useAuth();
   return (<>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
 
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/profile" /> : <LoginPage />} />
+        <Route path="/profile" element={isAuthenticated ? <ProfilePages /> : <Navigate to="/login" />} />
 
-        <Route path="/profile" element={<ProfilePages />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/profile" /> : <RegisterPage />} />
+        <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/profile" /> : <ForgotPassword />} />
+
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/favouritelist" element={<FavouriteList />} />
         <Route path="/delete" element={<DeleteAccount />} />
@@ -79,19 +80,23 @@ function App() {
         <Route path="/view-all" element={<ViewAllProduct />} />
 
         <Route path="/blogs" element={<BlogsPage />} />
-        <Route path="/blog-item" element={<BlogsPage />} />
+        <Route path="/blogs">
+          <Route path=":slug" element={<BlogsPage />} />
+        </Route>
 
         <Route path="/search" element={<SearchPage />} />
-
-        <Route path="/gallery" element={<GalleryPage />} />
 
         <Route path="/refer-earn" element={<ReferEarn />} />
 
         <Route path="/contactus" element={<ContactUsPage />} />
-        <Route path="/abous-us" element={<AbousUsPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/refund-policy" element={<RefundPolicy />} />
-        <Route path="/terms-conditions" element={<TermsConditions />} />
+
+        <Route path="/gallery" element={<GalleryPage />} />
+
+        <Route path="/abous-us" element={<ContentPages type={'about'} title={'Abous Us'} />} />
+        <Route path="/privacy-policy" element={<ContentPages type={'privacypolicy'} title={'Privacy Policy'} />} />
+        <Route path="/refund-policy" element={<ContentPages type={'refundpolicy'} title={'Refund Policy'} />} />
+        <Route path="/terms-conditions" element={<ContentPages type={'termsAndConditions'} title={'Terms & Conditions'} />} />
+
         <Route path="/ourteam" element={<OurTeam />} />
         <Route path="/faq" element={<Faq />} />
       </Routes>

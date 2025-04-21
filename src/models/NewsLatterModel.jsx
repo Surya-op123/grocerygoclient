@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import ShowToast from '../components/ShowToast';
 
 export default function NewsletterModal({ close, show }) {
+   const { subscribeToNewsletter } = useAuth();
+
+   const [emailNewsletter, setEmailNewsletter] = useState('');
+
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+      const result = await subscribeToNewsletter(emailNewsletter);
+      ShowToast({ message: result.message, type: result.success });
+      if (result.success === "success") setEmailNewsletter('');
+      close();
+   };
+
    if (!show) return null;
 
    return (
@@ -17,18 +31,13 @@ export default function NewsletterModal({ close, show }) {
                         <div className="py-5 px-sm-5 px-4">
                            <span className="fs-7 fs-500">Newsletter</span>
                            <h2 className="subscribe-title mt-1">Subscribe</h2>
-                           <p className="text-dark fw-500 fs-7 mb-4">
-                              Receive our latest updates about our products &amp; promotions.
-                           </p>
-                           <form action="" method="post" className="mb-0">
+                           <p className="text-dark fw-500 fs-7 mb-4">Receive our latest updates about our products &amp; promotions.</p>
+                           <form onSubmit={handleSubmit} className="mb-0">
                               <label className="text-black form-label fs-7 mb-1">Email</label>
-                              <input type="hidden" name="_token" defaultValue="RI3V0WT5fISqng1ITJW4psaXWJjE3m6l9fNx1fLb" autoComplete="off" />
                               <div className="input-group mb-4">
-                                 <input type="text" className="form-control border text-dark fw-500 bg-light" name="email" placeholder="Email" required />
+                                 <input type="text" className="form-control border text-dark fw-500 bg-light" name="email" placeholder="Email" required value={emailNewsletter} onChange={(e) => setEmailNewsletter(e.target.value)} />
                               </div>
-                              <button type="submit" className="btn btn-sm btn-secondary rounded-3 px-4 w-100 newsletter-btn" id="basic-addon2">
-                                 Subscribe
-                              </button>
+                              <button type="submit" className="btn btn-sm btn-secondary rounded-3 px-4 w-100 newsletter-btn" id="basic-addon2">Subscribe</button>
                            </form>
                         </div>
                      </div>

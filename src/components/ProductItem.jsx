@@ -16,7 +16,7 @@ export default function ProductItem({ i }) {
                <ul className="option-wrap ">
                   {isAuthenticated &&
                      <li className="option-round" data-bs-toggle="tooltip" data-bs-title="Wishlist" data-bs-placement="left">
-                        <a className="heart-icon btn btn-wishlist p-1" href="javascript:void(0)" title="Add to Wishlist"><i className="fa-regular fa-heart" /></a>
+                        <a className="heart-icon btn btn-wishlist p-1" href=" #" title="Add to Wishlist"><i className="fa-regular fa-heart" /></a>
                      </li>
                   }
                   <li className="option-round" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="View">

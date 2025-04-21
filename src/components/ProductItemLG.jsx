@@ -31,7 +31,7 @@ export default function ProductItemLG({ i }) {
                   </div>
                </div>
                <ul className="option-wrap-2">
-                  {isAuthenticated && <li className="option-round" data-bs-toggle="tooltip" data-bs-title="Wishlist" data-bs-placement="left"><a className="heart-icon btn btn-wishlist p-1" href="javascript:void(0)" title="Add to Wishlist"><i className="fa-regular fa-heart" /></a></li>}
+                  {isAuthenticated && <li className="option-round" data-bs-toggle="tooltip" data-bs-title="Wishlist" data-bs-placement="left"><a className="heart-icon btn btn-wishlist p-1" href=" #" title="Add to Wishlist"><i className="fa-regular fa-heart" /></a></li>}
                   <li className="tooltip-left option-round" data-bs-toggle="tooltip" data-bs-title="View"><a href="/product-page" className="wishlist-btn"><i className="fa-regular fa-eye" /></a></li>
                   <li onClick={AddCartModel} className="tooltip-left option-round" data-bs-toggle="tooltip" data-bs-title="Add To Cart"><a className="addtocart-btn wishlist-btn"> <i className="fa-solid fa-basket-shopping fs-7" /></a></li>
                </ul>

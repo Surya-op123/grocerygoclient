@@ -4,7 +4,7 @@ const ShowToast = ({
    message = '',
    type = 'success', // 'success', 'error', 'warning', 'info', or 'question'
    position = 'top-end',
-   background = type === 'success' ? '#28a745' : '#dc3545',
+   background = (type === 'success' || type === 'info') ? '#28a745' : '#dc3545',
    color = '#fff',
    timer = 3000
 }) => {

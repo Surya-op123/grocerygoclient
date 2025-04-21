@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import ShowToast from './ShowToast';
 
 export default function SideBarMenu({ close, open }) {
    useEffect(() => {
@@ -7,6 +9,17 @@ export default function SideBarMenu({ close, open }) {
          document.body.style.overflow = 'auto';
       };
    }, [open]);
+
+
+   const { subscribeToNewsletter } = useAuth();
+   const [emailNewsletter, setEmailNewsletter] = useState('');
+
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+      const result = await subscribeToNewsletter(emailNewsletter);
+      ShowToast({ message: result.message, type: result.success });
+      if (result.success === "success") setEmailNewsletter('');
+   };
 
    return (<>
       <div className={`offcanvas offcanvas-start ${open ? 'show' : ''}`} tabIndex="-1" id="footersiderbar" aria-labelledby="footersiderbar" aria-modal={open} role="dialog">
@@ -63,9 +76,9 @@ export default function SideBarMenu({ close, open }) {
             <div className="subscribe-box">
                <h5 className="text-dark text-capitalize pt-3 m-0 fw-600">Newsletter</h5>
                <p className="text-dark fs-7 my-3">Receive our latest updates about our products & promotions.</p>
-               <form className="mt-4 footer-form">
+               <form onSubmit={handleSubmit} className="mt-4 footer-form">
                   <div className="input-group gap-2">
-                     <input type="email" className="form-control rounded" name="email" placeholder="Email" required />
+                     <input type="email" className="form-control rounded" name="email" placeholder="Email" required value={emailNewsletter} onChange={(e) => setEmailNewsletter(e.target.value)} />
                      <button className="btn btn-secondary rounded px-4 py-2" type="submit">Subscribe</button>
                   </div>
                </form>

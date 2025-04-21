@@ -131,6 +131,43 @@ export const AuthProvider = ({ children }) => {
       }
    };
 
+   // Get All Blogs
+   const getAllBlogs = async () => {
+      try {
+         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/blogs`);
+         return response.data;
+      } catch (error) {
+         console.error('Error fetching blogs:', error);
+         return [];
+      }
+   };
+
+
+   // email newsLetter suscribe
+   const subscribeToNewsletter = async (email) => {
+      try {
+         const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/newsletter`, { email });
+         return { success: "success", message: res.data.message };
+      } catch (error) {
+         console.error('Newsletter subscription error:', error.response?.data || error.message);
+         return {
+            success: "error",
+            message: error.response?.data?.message || 'Something went wrong',
+         };
+      }
+   };
+
+   const isUserSubscribed = async (userEmail) => {
+      try {
+         const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/newsletter`);
+         const alreadySubscribed = res.data.find(sub => sub.email === userEmail);
+         return !!alreadySubscribed; // true if found, false otherwise
+      } catch (error) {
+         console.error("Error checking subscription:", error);
+         return false;
+      }
+   };
+
 
 
 
@@ -154,10 +191,17 @@ export const AuthProvider = ({ children }) => {
    }
 
    const [isAcceptedCookie, setIsAcceptedCookie] = useState(false);
-   const CookiesCancel = () => {
+
+   const CookiesCancel = async () => {
       setIsAcceptedCookie(false);
-      ShowNewsLatter();
-   }
+      const subscribed = await isUserSubscribed(user?.email);
+      if (subscribed === false) {
+         ShowNewsLatter();
+      }
+   };
+
+
+
 
    return (
       <AuthContext.Provider value={{
@@ -165,6 +209,8 @@ export const AuthProvider = ({ children }) => {
          logout, isAuthenticated: !!user, loading,
 
          getAllCategories, getAllSubCategories,
+         subscribeToNewsletter, isUserSubscribed,
+         getAllBlogs,
 
          AddCartModel, isAddCartModel, isBlur,
          isGuestModel, GuestModel,

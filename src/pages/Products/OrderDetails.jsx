@@ -7,7 +7,7 @@ import AuthLayout from '../../components/AuthLayout';
 export default function OrderDetails() {
    const { isAuthenticated } = useAuth();
    
-   return (<>{isAuthenticated ? (
+   return (<>{!isAuthenticated ? (
       <Layout>
          <div className="breadcrumb-sec">
             <div className="container">

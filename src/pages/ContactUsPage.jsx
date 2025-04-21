@@ -1,12 +1,62 @@
 import React, { useState } from 'react'
 import Layout from '../components/Layout'
 import { Link } from 'react-router-dom'
+import ReCAPTCHA from "react-google-recaptcha";
+import axios from 'axios';
+import ShowToast from '../components/ShowToast';
 
 export default function ContactUsPage() {
    const [showModal, setShowModal] = useState(false);
 
    const handleOpen = () => setShowModal(true);
    const handleClose = () => setShowModal(false);
+
+   const [captchaToken, setCaptchaToken] = useState(null);
+   const [formData, setFormData] = useState({
+      firstName: "",
+      lastName: "",
+      email: "",
+      message: ""
+   });
+
+   const handleChange = (e) => {
+      setFormData(prev => ({
+         ...prev,
+         [e.target.name]: e.target.value
+      }));
+   };
+
+
+   const handleCaptchaChange = (token) => {
+      console.log("Captcha token:", token);
+      setCaptchaToken(token);
+   };
+
+   const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      if (!captchaToken) {
+         ShowToast({ message: 'Please complete the ReCAPTCHA to prove you\'re not a robot', type: 'warning' });
+         return;
+      }
+      const fullName = `${formData.firstName} ${formData.lastName}`;
+      try {
+         await axios.post(`${import.meta.env.VITE_BASE_URL}/contactus`, {
+            fullName,
+            email: formData.email,
+            message: formData.message,
+            captchaToken
+         });
+         ShowToast({ message: 'Woohoo! Your message is on its way. We\'ll get back to you soon', type: 'success' });
+         setFormData({ firstName: "", lastName: "", email: "", message: "" });
+         setCaptchaToken(null);
+      } catch (err) {
+         console.error(err);
+         ShowToast({ message: 'Oops! Something went wrong. Please try again later', type: 'error' });
+      }
+   };
+
+
    return (
       <Layout>
          <div className="breadcrumb-sec">
@@ -15,7 +65,7 @@ export default function ContactUsPage() {
                   <nav className="text-dark d-flex breadcrumb-divider" aria-label="breadcrumb">
                      <ol className="breadcrumb">
                         <li className="breadcrumb-item "><a className="fw-bold text-dark" href="/">Home</a></li>
-                        <li className="breadcrumb-item   text-primary fw-bold active" aria-current="page"> Help &amp; Contact us</li>
+                        <li className="breadcrumb-item text-primary fw-bold active" aria-current="page"> Help &amp; Contact us</li>
                      </ol>
                   </nav>
                </div>
@@ -86,9 +136,9 @@ export default function ContactUsPage() {
                               </div>
                            </div>
                         </div>
+
                         <div className="col-md-6 col-sm-12 col-auto right-side">
-                           <form method="POST" className="p-5" action="">
-                              <input type="hidden" name="_token" defaultValue="" autoComplete="off" />
+                           <form className="p-5" onSubmit={handleSubmit}>
                               <div className="row">
                                  <p className="fs-2 fw-bold mb-2">Drop us a line</p>
                                  <span className="text-muted">Please feel free to contact me if you have any further questions or concerns</span>
@@ -96,30 +146,25 @@ export default function ContactUsPage() {
                               <div className="mb-3 mt-sm-5 mt-4 form-group">
                                  <div className="row g-sm-3 g-2">
                                     <div className="col-6">
-                                       <label  className="form-label mb-1">First Name<span className="text-danger">*</span></label>
-                                       <input type="text" className="form-control" name="fname" placeholder="First Name" required />
+                                       <label className="form-label mb-1">First Name<span className="text-danger">*</span></label>
+                                       <input type="text" className="form-control" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
                                     </div>
                                     <div className="col-6">
-                                       <label  className="form-label mb-1">Last Name<span className="text-danger">*</span></label>
-                                       <input type="text" className="form-control" name="lname" placeholder="Last Name" required />
+                                       <label className="form-label mb-1">Last Name<span className="text-danger">*</span></label>
+                                       <input type="text" className="form-control" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
                                     </div>
                                  </div>
                               </div>
                               <div className="mb-3 form-group">
-                                 <label  className="form-label mb-1">Email<span className="text-danger">*</span></label>
-                                 <input type="email" className="form-control" name="email" placeholder="Email" required />
+                                 <label className="form-label mb-1">Email<span className="text-danger">*</span></label>
+                                 <input type="email" className="form-control" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
                               </div>
                               <div className="mb-3 form-group">
-                                 <label  className="form-label mb-1">Message<span className="text-danger">*</span></label>
-                                 <textarea className="form-control" rows={2} name="message" placeholder="Message" required defaultValue={""} />
+                                 <label className="form-label mb-1">Message<span className="text-danger">*</span></label>
+                                 <textarea className="form-control" rows={2} name="message" placeholder="Message" value={formData.message} onChange={handleChange} required />
                               </div>
                               <div className="col-12">
-                                 <div className="g-recaptcha" data-sitekey="6LePaW8qAAAAAHxktIoC3ZSBrnugeGNUPg6j0VBA"><div style={{ "width": "304px", "height": "78px" }}>
-                                    <div> <iframe title="reCAPTCHA" width={304} height={78} role="presentation" name="a-vbgfla69uqv8" frameBorder={0} scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" src="https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LePaW8qAAAAAHxktIoC3ZSBrnugeGNUPg6j0VBA&co=aHR0cHM6Ly9ncm9jZXJ5Z28uaW5mb3RlY2hncmF2aXR5LmNvbTo0NDM.&hl=en&v=hbAq-YhJxOnlU-7cpgBoAJHb&size=normal&cb=2ztcjjykhwmf" /></div>
-                                    <textarea id="g-recaptcha-response" name="g-recaptcha-response" className="g-recaptcha-response" style={{ "width": "250px", "height": "40px", "border": "1px solid rgb(193, 193, 193)", "margin": "10px 25px", "padding": "0px", "resize": "none", "display": "none" }} defaultValue={""} />
-                                 </div>
-                                    <iframe style={{ "display": "none" }} />
-                                 </div>
+                                 <ReCAPTCHA sitekey="6Ld7RB8rAAAAAKWNubIgE8rWHO8oK1MQ_u8ArgQi" onChange={handleCaptchaChange} />
                               </div>
                               <div className="col-12 d-inline-block">
                                  <button type="submit" className="btn px-4 btn-primary float-end">Save</button>

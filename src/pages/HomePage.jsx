@@ -6,6 +6,7 @@ import OwlCarousel from "react-owl-carousel";
 import ProductItem from '../components/ProductItem';
 import ProductItemLG from '../components/ProductItemLG';
 import { useAuth } from '../contexts/AuthContext';
+import { formatDate } from '../utils/DateFormat';
 
 const offers = [
   { text: "Excellent Offer For Shop : OFF10" },
@@ -278,16 +279,13 @@ const best_products = [
 ]
 
 export default function HomePage() {
-
-  const { getAllCategories } = useAuth();
+  const { getAllCategories, getAllBlogs } = useAuth();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       const data = await getAllCategories();
-      // setCategories(data);  // Not Dubble data
-      const doubled = [...data, ...data]; // double Data
-      setCategories(doubled.filter(category => category.status === true));
+      setCategories(data.filter(category => category.status === true));  // Not Dubble data
     };
 
     fetchCategories();
@@ -297,7 +295,7 @@ export default function HomePage() {
   const options = {
     loop: true,
     autoplay: true,
-    autoplayTimeout: 2000,
+    autoplayTimeout: 3000,
     autoplaySpeed: 6000,
     dots: false,
     nav: false,
@@ -410,6 +408,16 @@ export default function HomePage() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach((el) => { new window.bootstrap.Tooltip(el); });
   }, []);
+
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const data = await getAllBlogs();
+      setBlogs(data);
+    };
+    fetchBlogs();
+  }, [getAllBlogs]);
 
 
   return (<Layout>
@@ -807,20 +815,20 @@ export default function HomePage() {
           </div>
 
           <OwlCarousel className="blog-slider" {...blogSettings}>
-            {Array.from({ length: 4 }, (_, i) => (
-              <div className="item m-2" key={i}>
+            {blogs.map((blog) => (
+              <div className="item m-2" key={blog._id}>
                 <div className="card card-hover rounded-4 overflow-hidden">
-                  <a href={'/blog-item'}><img src={"/assets/img/about/blog-800_400.svg"} className="card-img-top" alt={''} /></a>
+                  <Link to={`/blogs/${blog._id}`}><img src={blog.blogImage} className="card-img-top" alt={''} /></Link>
                   <div className="card-body px-3 pb-0">
                     <h5 className="card-title fw-bold dark_color">
-                      <a href={'/blog-item'} className="dark_color">{"Addictive Appetizers: Sausage Cheese Balls"}</a>
+                      <Link to={`/blogs/${blog._id}`} className="dark_color">{blog.title}</Link>
                     </h5>
-                    <p className="fs-7 text-muted m-0">Lorem is dummy ipsum text. Lorem is dummy ipsum text...</p>
+                    <p className="fs-7 text-muted m-0">{blog.message.slice(0, 100)}...</p>
                   </div>
                   <div className="card-footer border-0 bg-transparent px-3">
                     <div className="d-flex justify-content-between align-items-center">
-                      <div className="col-auto mb-0 blog-date"><span className="text-muted fw-600">{"23/04/2025"}</span></div>
-                      <a href={'/blog-item'} className="text-primary border-0 fw-500 fs-7 float-end">Read More <i className="fa fa-arrow-right" /></a>
+                      <div className="col-auto mb-0 blog-date"><span className="text-muted fw-600">{formatDate(blog.updatedAt)}</span></div>
+                      <Link to={`/blogs/${blog._id}`} className="text-primary border-0 fw-500 fs-7 float-end">Read More <i className="fa fa-arrow-right" /></Link>
                     </div>
                   </div>
                 </div>

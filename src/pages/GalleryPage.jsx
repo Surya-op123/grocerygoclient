@@ -1,29 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
-
-const galleryImages = [
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f66226ed74f.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f6616a45ab7.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f6616a45156.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65df3443f4.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65df3440be.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65df343e2a.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65df343b59.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65df343103.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21fc17.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21f9b5.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21f6f2.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21f110.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21e99e.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62f65bf21dcf1.jpeg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62ed082c7315e.jpg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62ed082c71dbc.jpg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62ed082c70713.jpg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62ed082c6f0fc.jpg",
-   "https://grocerygo.infotechgravity.com/storage/app/public/admin-assets/images/about/gallery-62ed082c6767e.jpg"
-];
+import axios from 'axios';
 
 export default function GalleryPage() {
+   const [galleryImages, setGalleryImages] = useState([]);
+
+   useEffect(() => {
+      const fetchFaqs = async () => {
+         try {
+            const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/gallery`);
+            setGalleryImages(res.data);
+         } catch (error) {
+            console.error('Error fetching galleryImgs:', error);
+         }
+      };
+      fetchFaqs();
+   }, []);
+
    useEffect(() => {
       if (window.Fancybox) {
          window.Fancybox.bind('[data-fancybox="gallery"]', {
@@ -52,8 +45,8 @@ export default function GalleryPage() {
                <div className="breadcrumb-sec-content">
                   <nav className="text-dark d-flex breadcrumb-divider" aria-label="breadcrumb">
                      <ol className="breadcrumb">
-                        <li className="breadcrumb-item "> <a className="fw-bold text-dark" href="/">Home</a> </li>
-                        <li className="breadcrumb-item  text-primary fw-bold active" aria-current="page">Gallery</li>
+                        <li className="breadcrumb-item"> <a className="fw-bold text-dark" href="/">Home</a> </li>
+                        <li className="breadcrumb-item text-primary fw-bold active" aria-current="page">Gallery</li>
                      </ol>
                   </nav>
                </div>
@@ -64,9 +57,9 @@ export default function GalleryPage() {
             <div className="container mb-5">
                <h3 className="fw-bold fs-2 mb-4 truncate-2">Gallery</h3>
                <div id="galleryimg">
-                  {galleryImages.map((src, index) => (
-                     <div key={index} data-src={src} data-fancybox="gallery" data-thumb={src}>
-                        <img src={src} width={200} height={150} />
+                  {galleryImages.map((src) => (
+                     <div key={src._id} data-src={src.galleryImage} data-fancybox="gallery" data-thumb={src.galleryImage}>
+                        <img src={src.galleryImage} width={200} height={150} />
                      </div>
                   ))}
                </div>

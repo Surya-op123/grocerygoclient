@@ -245,7 +245,7 @@ input::placeholder {
     --bs-primary-light: color-mix(in srgb, var(--bs-primary), transparent 90%);
     --bs-secondary-light: color-mix(in srgb, var(--bs-secondary), transparent 90%);
 
-    --faq-icon-background-image: url(../images/chevron-right-solid.svg);
+    --faq-icon-background-image: url("/assets/img/chevron-right-solid.svg");
 }
 
 .line-1 {
@@ -3551,7 +3551,7 @@ footer .quality .quality-icon {
 }
 
 .team-icon.twi {
-    background-color: #1DA1F2;
+    background-color: #f21d1d;
     color: #fff !important;
 }
 

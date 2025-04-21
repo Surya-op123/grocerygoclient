@@ -34,7 +34,7 @@ export default function AddressPage() {
                               </td>
                               <td className="fs-7">
                                  <div className="px-3">
-                                    <a className="text-danger mx-1" href="javascript:void(0)"><i className="fa-solid fa-trash-can" /></a>
+                                    <a className="text-danger mx-1" href=" #"><i className="fa-solid fa-trash-can" /></a>
                                     <a className="text-info mx-1" href="/address/update"><i className="fa-solid fa-pen-to-square" /></a>
                                  </div>
                               </td>
@@ -50,7 +50,7 @@ export default function AddressPage() {
                               </td>
                               <td className="fs-7">
                                  <div className="px-3">
-                                    <a className="text-danger mx-1" href="javascript:void(0)"><i className="fa-solid fa-trash-can" /></a>
+                                    <a className="text-danger mx-1" href=" #"><i className="fa-solid fa-trash-can" /></a>
                                     <a className="text-info mx-1" href="/address/update"><i className="fa-solid fa-pen-to-square" /></a>
                                  </div>
                               </td>
